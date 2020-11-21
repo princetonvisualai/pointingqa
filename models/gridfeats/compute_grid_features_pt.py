@@ -19,14 +19,14 @@ grid_dir = './gridfeats/'
 size_dir = './img_sizes/'
 out_dir = './gridfeats_pt'
 
-img_ids = list(vqamb.keys())
+img_ids = list(dataset.keys())
 
 cnt = 0
 for img_id in img_ids[args.lower:args.higher]:
 
      cnt += 1
      if cnt % 100 == 0:
-          print(cnt)
+	  print(cnt)
 
      grid_path = grid_dir + str(img_id) + '.pt'
      grid_img = torch.load(grid_path).squeeze()
@@ -42,7 +42,7 @@ for img_id in img_ids[args.lower:args.higher]:
      # compute image scale factor
      img_scale = 600 / min_size
      if img_scale * max_size > 1000:
-          img_scale = 1000 / max_size
+	  img_scale = 1000 / max_size
 
      neww = int(w * img_scale + 0.5)
      newh = int(h * img_scale + 0.5)
@@ -53,22 +53,22 @@ for img_id in img_ids[args.lower:args.higher]:
      hmod = newh % 32
      
      if wmod != 0:
-          neww += (32 - wmod)
+	  neww += (32 - wmod)
      
      if hmod != 0:
-          newh += (32 - hmod) 
+	  newh += (32 - hmod) 
 
      for qa in dataset[img_id]:
-          for pt in qa['points']:
-               x, y = pt['x'], pt['y']
-               fname = out_dir + str(img_id) + ',' + str(x) + ',' + str(y) + '.pt'
-               
-               if os.path.exists(fname): continue
+	  for pt in qa['points']:
+	       x, y = pt['x'], pt['y']
+	       fname = out_dir + str(img_id) + ',' + str(x) + ',' + str(y) + '.pt'
+	       
+	       if os.path.exists(fname): continue
 
-               new_x, new_y = x * (neww/w), y * (newh/h)
-               
-               # downsample point
-               down_x, down_y = int(math.floor(new_x / 32)), int(math.floor(new_y / 32)) 
-               grid_feat = grid_img[:, down_y, down_x]
+	       new_x, new_y = x * (neww/w), y * (newh/h)
+	       
+	       # downsample point
+	       down_x, down_y = int(math.floor(new_x / 32)), int(math.floor(new_y / 32)) 
+	       grid_feat = grid_img[:, down_y, down_x]
 
-               torch.save(grid_feat, fname)
+	       torch.save(grid_feat, fname)
