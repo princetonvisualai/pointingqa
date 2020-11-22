@@ -1,0 +1,45 @@
+task_attributes:
+  vqa:
+    datasets:
+    - vqamb_level2
+    dataset_attributes:
+      vqamb_level2:
+        data_root_dir: 
+        feat_folder: 
+        vqamb_path: 
+
+        # folder containing point-supervision features
+        feat_folder: looktwice_imgs
+
+        # whether to pad detectron features (usually true)
+        pad_detectron: True
+
+        # context features (current use: ground truth bounding box)
+        use_context: True
+        context_feat_folder: looktwice_new_ptgt
+        pad_context: False
+        
+        processors:
+          text_processor:
+            type: vocab
+            params:
+              max_length: 13 # maximum length of question in VQAmb Dataset
+              vocab:
+                type: intersected
+                embedding_name: glove.6B.300d
+                vocab_file: vocabs/looktwice_pt_vocab5.txt
+
+            preprocessor:
+              type: simple_sentence
+              params: {}
+
+          answer_processor:
+            type: multi_hot_answer_from_vocab
+            params:
+              vocab_file: vocabs/looktwice_answers.txt
+              preprocessor:
+                type: simple_word
+                params: {}
+
+
+

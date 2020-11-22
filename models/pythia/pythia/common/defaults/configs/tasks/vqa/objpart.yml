@@ -1,0 +1,36 @@
+task_attributes:
+  vqa:
+    datasets:
+    - objpart
+    dataset_attributes:
+      objpart:
+        data_root_dir: 
+        feat_folder: 
+
+        # folder containing point-supervision features
+        pt_feat_folder: objpart_pt
+
+        # whether to pad detectron features (usually true)
+        pad_detectron: True
+
+        processors:
+          text_processor:
+            type: vocab
+            params:
+              max_length: 6 # maximum length of question in VQAmb Dataset
+              vocab:
+                type: intersected
+                embedding_name: glove.6B.300d
+                vocab_file: vocabs/objpart_d3_vocab.txt
+
+            preprocessor:
+              type: simple_sentence
+              params: {}
+
+          answer_processor:
+            type: multi_hot_answer_from_vocab
+            params:
+              vocab_file: vocabs/objpart_d3_answers.txt
+              preprocessor:
+                type: simple_word
+                params: {}
