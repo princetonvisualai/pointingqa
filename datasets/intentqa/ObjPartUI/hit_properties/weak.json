@@ -1,0 +1,10 @@
+{
+  "title": "Select Part vs Object",
+  "description": "Decide whether the point in the image refers to the object or the part.",
+  "keywords": "image,images,part,object,weak,supervision,vision,semantic",
+  "reward": 0.05,
+  "duration": 1800,
+  "frame_height": 20000,
+  "max_assignments": 3,
+  "Country": ["US"]
+}

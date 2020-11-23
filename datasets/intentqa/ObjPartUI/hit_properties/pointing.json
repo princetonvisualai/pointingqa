@@ -1,0 +1,12 @@
+{
+  "title": "What is this?",
+  "description": "Respond with whether the red point refers to the object, object part, or is too ambiguous to tell.",
+  "keywords": "image,images,part, object, semantic, point, points, pointing",
+  "reward": 0.05,
+  "duration": 900,
+  "frame_height": 20000,
+  "max_assignments": 1,
+  "country": ["US"],
+  "hits_approved": 0,
+  "percent_approved": 0
+}
