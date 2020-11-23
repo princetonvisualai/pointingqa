@@ -11,8 +11,6 @@ And Yu's paper:
          year      = {2016},
 }
 
-Go Tigers!
-
 '''
 import math
 import torch.nn as nn
@@ -31,7 +29,7 @@ BatchNorm = nn.BatchNorm2d
 # __all__ = ['DRN', 'drn26', 'drn42', 'drn58']
 
 
-WEBROOT = 'https://tigress-web.princeton.edu/~fy/drn/models/'
+WEBROOT = ''
 
 MODEL_URLS = {
     'drn-c-26': WEBROOT + 'drn_c_26-ddedf421.pth',
