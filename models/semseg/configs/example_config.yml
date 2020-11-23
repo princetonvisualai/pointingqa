@@ -1,0 +1,35 @@
+task: ObjectPartSemanticTask
+seed: 42
+resume: true
+cuda: true
+grad_accumulation: 4
+dev_split_name: val
+batch_size: 12 
+num_workers: 2
+num_epochs: 100
+eval_frequency: 20
+save_frequency: 20
+log_frequency: 4
+TRIAL_BUDGET: 100
+model: ObjPartNetV0
+binary_classify: True
+test_often: True
+use_semantic_segmentation: False
+pretrained: True
+model_config:
+    arch: resnet101
+    example_param: 1
+    output_dims: binary
+    separate_heads: true
+criteria: 
+  - 'CrossEntropy'
+lr_scheduler_config:
+    scheduler: WarmupISRScheduler
+    lr : 1e-4
+    warmup_from_zero: true
+    warmup_steps: 50
+optimizer_config:
+    optimizer: Adam
+loss_weights:
+    semseg: 0.00
+    objpart: 30000.0
