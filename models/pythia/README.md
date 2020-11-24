@@ -1,4 +1,4 @@
-Pythia v0.3 (Credit: https://github.com/facebookresearch/mmf)
+Builds off of Pythia v0.3 (Credit: https://github.com/facebookresearch/mmf)
 
 To run the Local-QA-model or Local-QA-grid-model (with computed features):
 
