@@ -1,0 +1,1 @@
+Computes region features for the Local-QA-model and Global-QA-model. Requires installation of vqa-maskrcnn-benchmark.

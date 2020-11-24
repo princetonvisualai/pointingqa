@@ -1,3 +1,5 @@
+Code based off of grid-feat-vqa repository (https://github.com/facebookresearch/grid-feats-vqa), edited for our dataset. README for grid features below.
+
 # In Defense of Grid Features for Visual Question Answering
 **Grid Feature Pre-Training Code**
 

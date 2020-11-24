@@ -1,0 +1,1 @@
+Computes grid features for the LocalQA-grid-model. Based off grid-feats-vqa repository (https://github.com/facebookresearch/grid-feats-vqa).
