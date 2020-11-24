@@ -1,1 +1,1 @@
-verbal_spatial_disamb
+Create dataset for verbal/spatial disambiguation

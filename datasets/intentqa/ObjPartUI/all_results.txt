@@ -1,0 +1,4 @@
+Total results to fetch 76 
+Request hits page 1
+Request hits page 2
+76

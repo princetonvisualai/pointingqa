@@ -1,0 +1,825 @@
+<html>
+   <head>
+      <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+      <!--<meta content="utf-8" http-equiv="encoding"> -->
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+      <title>Annotate images</title>
+      <script src='//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js'></script>
+      <script src='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js'></script>
+      <script src='//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js'></script>
+      <script src='//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js'></script>
+      <script src='//cdnjs.cloudflare.com/ajax/libs/json3/3.3.2/json3.min.js'></script>    
+      <script src='//cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.2/typeahead.bundle.min.js'></script>
+      <!-- IMPORTANT: before submitting to AMT, make sure the paths are absolute rather than relative, e.g.,
+         //image-net.org/path/to/templates/ --> 
+      <script src='https://rawgit.com/<redacted>/Pointing/master/hit_templates/js/require.js'></script>
+      <script src='https://rawgit.com/<redacted>/Pointing/master/hit_templates/js/utils.js'></script>
+      <script src='https://rawgit.com/<redacted>/Pointing/master/hit_templates/js/carosel.js'></script>
+      <!-- If want to get just one click per object class -->
+      <script src='https://rawgit.com/<redacted>/Pointing/master/hit_templates/js/part-task.js'></script>
+      <script src='https://rawgit.com/<redacted>/Pointing/master/hit_templates/js/timer.js'></script>
+      <!-- <script src='https://rawgit.com/<redacted>/Pointing/master/hit_templates/js/get-cached-valid-imgs.js'></script> -->
+      <script src='https://rawgit.com/<redacted>/Pointing/master/hit_templates/js/drawpoint.js'></script>
+      <!--<script src='https://rawgit.com/<redacted>/Pointing/master/hit_templates/js/get_examples.js'></script> -->
+      <script src='https://cdn.rawgit.com/<redacted>/Pointing/a5d2727e/hit_templates/js/get_examples.js'></script>
+      <script src='https://rawgit.com/<redacted>/Pointing/master/hit_templates/js/get_obj_dictionary_hr.js'></script>
+      <!-- -->
+      <link href='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css' rel='stylesheet'>
+      <style>
+         :root {
+         --main-color: #f1f1f1;
+         --main-text-color: black;
+         --instr-color: rgba(219, 238, 249, 0.5);
+         }
+         html, body { margin: 0; padding: 0; height: 100%; width: 100%;}
+         .tt-dropdown-menu {
+         width: 200px;
+         background-color: #fff;
+         border: 1px solid #ccc;
+         border: 1px solid rgba(0, 0, 0, 0.2);
+         }
+         .query-img {
+         width: 225px;
+         height: 225px;
+         margin-bottom: 5px;
+         }
+         .other-img {
+         margin-right: 1px;
+         margin-bottom: 1px;
+         width: 175px;
+         height: 175px;
+         border: 6px solid transparent;
+         cursor: pointer;
+         }
+         #c-imgs-div {
+         background-color: var(--main-color); /*#333;*/ /*#DCDCDC;*/
+         position: relative;
+         padding:5px;
+         }
+         .padded {
+         padding: 10px;
+         margin: 5px;
+         }
+         #c-buttons-div {
+         padding: 5px 0px 0px;
+         }
+         .img-selected {
+         border-style: solid;
+         border-color: #0F0;
+         }
+         .task-instr {
+         }
+         .task-instr-text {
+         font-size: 14px;
+         color: var(--main-text-color);
+         text-align:left;
+         }
+         .task-instr-title {
+         font-size: 22px;
+         color: var(--main-text-color);
+         padding: 5px;
+         margin: 5px;
+         <!--text-decoration:underline;-->
+         }
+         .task-instr-clsname {
+         font-size: 32px;
+         color: blue;
+         font-weight:bold;
+         margin-bottom:5px;
+         }
+         table {
+         font-size:12px;
+         }
+         td {
+         padding: 5px;
+         border:2px solid black;
+         }
+         .buttons-container {
+         background-color: var(--main-color); /*#333;*/
+         }
+         .container {
+         margin: 0; padding: 0; height: 100%; width: 100%;
+         background-color: var(--main-color); /*#333;*/
+         }
+         .container-fluid {
+         margin: 0; padding: 0; height: 100%; width: 100%;
+         background-color: var(--main-color); /*#333;*/
+         }
+         .chosen-counter {
+         text-align: center;
+         font-size: 24px;
+         margin-top: 10px;
+         margin-bottom: 10px;
+         }
+         .colored-div {
+         background-color: var(--main-color); 
+         }
+         .div-warning {
+         background-color:white;
+         font-size:16px;
+         color: red;
+         }
+         .global-instr {
+         padding-top:1px;
+         padding-bottom:10px;
+         padding-right:10px;
+         padding-left:10px;
+         background-color: var(--instr-color); /*var(--main-color);*/ 
+         border-color: black; /*var(--main-color);*/ 
+         -moz-border-radius:10px;  /* for Firefox */
+         -webkit-border-radius:10px; /* for Webkit-Browsers */
+         border-radius:10px; /* regular */
+         /*opacity:0.5;*/ /* Transparent Background 50% */
+         display:inline-block;
+         }
+         .global-instr-all {
+         /*background-color:#A8A8A8;*/
+         /*background-color: var(--main-color);*/ /*#333;*/
+         color: black;
+         }
+         .centering-box {
+         margin: 0; padding: 0; /*height: 100%;*/ width: 100%;
+         background-color: var(--main-color); /*#333;*/
+         }
+         .centering-box span {
+         width: 100%;
+         display: inline-block;
+         vertical-align: middle;
+         line-height: normal;
+         }
+         .centering-box-div {
+         /* height: 100%;*/
+         text-align: center;
+         width: 33.3%;
+         float:left;
+         }
+         .sp {
+         height:10px;
+         }
+         #last-task {
+         font-size:10px;
+         color:green;
+         }
+         button {
+         display: block;
+         }
+         /* https://codepen.io/jahid-webdev/pen/JRPvBj*/
+        .grayscale {
+        /* filter: url(filters.svg#grayscale); Firefox 3.5+ */
+          filter: gray; /* IE5+ */
+          -webkit-filter: grayscale(1); /* Webkit Nightlies & Chrome Canary */
+          -webkit-transition: all .25s ease-in-out;
+
+        }
+       .color {
+        filter: none;
+          -webkit-filter: grayscale(0);
+          -webkit-transition: all .25s ease-in-out;
+          /*-webkit-transform: scale(1.01);*/
+        }
+      </style>
+   </head>
+   <body>
+      <div class='container'>
+         <!--<div class="card card-inverse" style="background-color: #333; border-color: #333;"> -->
+         <div class='container-fluid'>
+             <div id="begin_padding" class="" width="100%" style="position: absolute; height: 50px; background-color: var(--main-color);"></div>
+            <br>
+            <div id='preview-div' class='div-warning hidden text-center padded'>
+               Warning: this is preview mode. You will not be able to submit. 
+            </div>
+            <!-- top text -->
+            <div class='centering-box'>
+               <span>
+                  <div class='centering-box-div colored-div'><br></div>
+                  <div class=' centering-box-div'>
+                     <div class='global-instr global-instr-all text-center'>
+                        <div class='global-instr-all text-center task-instr-clsname' id='question_title'></div>
+                        <b>Please select the item to which the point most likely refers.</b>
+                        <br>
+                        <p id='clsname'>TODO</p>
+
+                     </div>
+                  </div>
+                  <div class='centering-box-div colored-div'><br></div>
+               </span>
+            </div>
+            <!-- top text -->
+            <div class='sp'></div>
+            <div id='last-task' class='hidden colored-div text-center'>
+               This is the last question. Use the submit button below when you are done.
+            </div>
+            <div id='start-div' class='colored-div text-center'>
+               <button id='start-btn' class='btn btn-lg btn-success'></button>
+            </div>
+            <div id='loading-sign' class='colored-div text-center hidden'>
+            </div>
+            <div id='test-imgs-div' class='colored-div text-center'>
+            </div>
+            <span style="height: 420px;display: block;">
+            <div id='c-imgs-div' class='colored-div text-center hidden '></div>
+            </span>
+            <div id='c-options-div' class='colored-div text-center hidden'></div>
+            <div id='c-buttons-div' class='colored-div text-center hidden'></div>
+            <div id='c-simpleamt-scripts-div' class='colored-div text-center hidden'>
+                {% include "simpleamt.html" %}
+            </div>
+            <div id='submit-div' class='colored-div text-center'>
+               <button id='submit-btn' class='btn btn-lg btn-success hidden' disabled='true'>Submit</button>
+            </div>
+            <div id='error-div' class='text-center div-warning'>
+            </div>
+            <div class='colored-div sp'></div>
+            <div class= 'centering-box'>
+               <span>
+                  <div class='centering-box-div colored-div text-center'> <br></div>
+                  <div class='centering-box-div global-instr global-instr-all ' id='global-instr'></div>
+                  <div class='centering-box-div colored-div text-center'> <br></div>
+               </span>
+            </div>
+            <div id="end_padding" class="" width="100%" style="height: 50px; background-color: var(--main-color);">
+            </div>
+         </div>
+         <!-- container-fluid -->
+      </div>
+      <!-- container -->
+      <script type="text/javascript">
+         $(function() {
+
+
+         var url_params = simplewill.getUrlParams();
+         //var url_params = simpleamt.getUrlParam();
+         
+         //var SAMPLE_INPUT = VG.SampleInput().get(url_params.index);
+         var DEFAULT_INPUT = { 'im': 'https://picsum.photos/200/300/?random', 'points': []};
+         
+         var preview = false; //!(url_params.assignmentId) || (url_params.assignmentId === 'ASSIGNMENT_ID_NOT_AVAILABLE');
+         //var debug_mode = !(url_params.turkSubmitTo);
+         var debug_mode = false; //url_params not on
+         var batch_size = 3;
+        var objnum2name = { "416" : "train",  "65" : "cat",  "2" : "airplane",  "34" : "bottle",  "72" : "chair",  "258" : "motorbike",  "427" : "tv/monitor",  "98" : "cow",  "45" : "bus",  "368" : "sofa",  "113" : "dog",  "308" : "potted plant",  "59" : "car",  "23" : "bicycle",  "397" : "dining table",  "25" : "bird",  "347" : "sheep",  "207" : "horse",  "284" : "person",  "31" : "boat" }
+         var examples = VG.getExamples();
+
+         var objDict = VG.ObjectDictionary().get();
+         
+         function main() {
+             simpleamt.setupSubmit();
+             var data = simplewill.getInput(DEFAULT_INPUT);
+             //var data = simpleamt.getInput(DEFAULT_INPUT);
+
+             ////Collect the im_names separately
+             //if(data['input'].length == 2){
+             //    var im_names = data['input'][1];
+             //} else{
+             //    var im_names = [];
+             //    var im_names = data['input'][1];
+             //}
+
+             data = data['input'][0];
+             var obj_type = Object.keys(Object.values(data[0])[0]['points']['data'])[0];
+             obj_type = obj_type.substring(0, obj_type.indexOf('_'));
+             var obj_id = obj_type; 
+             console.log(obj_id);
+             example_object = examples[obj_id]["obj"]; 
+             example_part = examples[obj_id]["part"]; 
+
+             //Load images
+             obj_im_src = Object.values(example_object)[0]['im'] + '.jpg';
+             obj_points = Object.values(Object.values(example_object)[0]['points']['data'])[0]['points'][0];
+             example_part_id = parseInt(Object.values(example_part)[0]['gt']);
+             var example_part_name = objDict[obj_id]['parts'][example_part_id];
+             part_im_src = Object.values(example_part)[0]['im'] + '.jpg';
+             part_points = Object.values(Object.values(example_part)[0]['points']['data'])[0]['points'][0];
+
+             //var obj_im_span = document.getElementById('example_obj');
+             //var part_im_span = document.getElementById('example_part');
+             var obj_im_span = document.createElement('span');
+             var part_im_span = document.createElement('span');
+             obj_im_span.setAttribute('class', 'centering-box-div');
+             part_im_span.setAttribute('class', 'centering-box-div');
+             var obj_im = new Image();
+             var part_im = new Image();
+             obj_im.src = obj_im_src; 
+             part_im.src = part_im_src; 
+             obj_im.points = obj_points;
+             part_im.points = part_points;
+             obj_im.name = 'Example Object';
+             part_im.name = 'Example Part';
+             var obj_canvas = document.createElement("canvas");
+             var part_canvas = document.createElement("canvas");
+             obj_im.canvas = obj_canvas;
+             part_im.canvas = part_canvas;
+
+             function example_onload(self){
+                 var example_div = self.example_div;
+                 example_div.style.position = "relative";
+                 var canvas = self.canvas;
+                 var drawingcanvas = self.drawingcanvas;
+                 //drawingcanvas.setAttribute("style", "position: absolute; left: 0; top: 0; pointer-events: none; z-index: 1;")
+                 drawingcanvas.setAttribute("style", "position: absolute; left: 0; top: 0; pointer-events: none; right: 0; margin-left: auto; margin-right: auto; z-index: 1;")
+
+                 canvas.setAttribute("style", "position: absolute; left: 0; top: 0; right: 0; margin-left: auto; margin-right: auto; z-index: 0;")
+                 //canvas.style.cursor = "crosshair"; 
+                 canvas.setAttribute("id", self.name); 
+                 canvas.setAttribute("alt", self.src);
+                 canvas.onmouseover = function() { 
+                        if (this.classList.contains("color")) {
+                            this.classList.remove("color");
+                            this.classList.add("grayscale");
+                        } else{
+                            this.classList.remove("grayscale");
+                            this.classList.add("color");
+                        }
+                    }
+                 canvas.onmouseleave = function() { 
+                        if (this.classList.contains("color")) {
+                            this.classList.remove("color");
+                            this.classList.add("grayscale");
+                        } else{
+                            this.classList.remove("grayscale");
+                            this.classList.add("color");
+                        }
+                    }
+
+                 var ratio = 0.5;
+                 canvas_width = Math.ceil(self.width*ratio);
+                 canvas_height = Math.ceil(self.height*ratio);
+                 canvas.setAttribute('width', canvas_width);
+                 canvas.setAttribute('height', canvas_height);
+                 canvas.classList.add('grayscale');
+
+                 drawingcanvas.setAttribute('width', canvas_width);
+                 drawingcanvas.setAttribute('height', canvas_height);
+                 drawingcanvas.style.left = 0;
+                 drawingcanvas.style.right = 0;
+                 drawingcanvas.style.marginLeft = "auto";
+                 drawingcanvas.style.marginRight = "auto";
+
+                 var ctx = canvas.getContext('2d');
+                 ctx.drawImage(self, 0, 0, self.width, self.height, 0, 0, canvas_width, canvas_height);
+
+                 ctx = drawingcanvas.getContext('2d');
+                 point = self.points;
+                 point[0] = Math.ceil(point[0]*ratio);
+                 point[1] = Math.ceil(point[1]*ratio);
+                 //VG.drawPoint(ctx, point, 0, 0, ratio,  2*ratio);
+                 VG.drawPoint(ctx, point, 0, 0, 1,  2*ratio);
+
+                 example_div.style.height = (canvas_height+10) + "px";
+                 example_div.appendChild(canvas);
+                 example_div.appendChild(drawingcanvas);
+               }
+
+
+               var newdiv = document.createElement("div");
+               var drawingcanvas = document.createElement('canvas');
+               newdiv.style.display = "block";
+               obj_im_span.appendChild(newdiv);
+               obj_im.example_div = newdiv;
+               obj_im.drawingcanvas = drawingcanvas;
+               obj_im.onload = function() {example_onload(this)};
+
+               newdiv = document.createElement("div");
+               drawingcanvas = document.createElement('canvas');
+               newdiv.style.display = "block";
+               part_im_span.appendChild(newdiv);
+               part_im.example_div = newdiv;
+               part_im.drawingcanvas = drawingcanvas;
+               part_im.onload = function() {example_onload(this)};
+             // End loading example images
+
+             obj_type = objnum2name[obj_type]
+
+
+
+             
+             batch_size = data.length; // Remove if you wish to limit the size
+         
+             //VG.reservoirSelect(im_names, batch_size, function(arr) {
+             //    im_names = arr;
+             //});
+         
+             VG.shuffle(data, function(arr) { 
+                 data = arr;
+             });
+
+             var im_names = []
+             for(var i=0; i < data.length; i++){
+                 im_names.push(Object.keys(data[i])[0]);
+             }
+
+
+             var points = [];  
+             var im_srcs = []; 
+             var ground_truths= [];
+             num_silh = 0.0;
+             for(var i=0;i<im_names.length;i++){
+                 name = im_names[i];
+                 point = data[i][name]['points'];
+
+                 partsrc = Object.keys(point['data'])[0].split("_")
+                 partsrc = partsrc[partsrc.length-1]
+                 if (partsrc == '100'){
+                     num_silh++;
+                 }
+                 gt = "NA";
+                 if ("gt" in data[i][name]){
+                     gt = data[i][name]["gt"];
+                 }
+                 ground_truths.push(gt);
+                 points.push(point); //Flattening
+                 im_srcs.push(data[i][name]['im'] + '.jpg'); // Flattening
+             }
+             console.log("Percent from silh");
+             console.log((num_silh/im_names.length)*100.0)
+             var im_canvases = [];
+             var point_canvases = [];
+             var divsLoaded = 0;
+
+
+
+             for(var i=0; i < batch_size;i++){
+                 name = im_names[i];
+                 im_data = points[i]; // Changed to an arraylist //Flattening
+                 im_src = im_srcs[i];
+                 gt = ground_truths[i];
+
+                 var im = new Image();
+
+                 im.src = im_src; 
+                 im.data = im_data;
+                 im.gt = gt;
+                 im.name = name;
+                 var canvas = document.createElement("canvas");
+                 var drawingcanvas = document.createElement("canvas");
+                 var imdiv = document.createElement("div");
+                 imdiv.setAttribute("id", "imdiv-"+i);
+
+                 //canvas.style.cursor = "crosshair";
+                 canvas.setAttribute("id", this.name); 
+                 canvas.setAttribute("alt", this.src);
+                 im.canvas = canvas;
+                 im.drawingcanvas = drawingcanvas;
+                 im.container_div = imdiv;
+
+                 im_canvases.push(canvas);
+                 point_canvases.push(drawingcanvas);
+                 //document.getElementById("c-imgs-div").appendChild(canvas);
+                 document.getElementById("c-imgs-div").appendChild(imdiv);
+                
+                 
+                 im.onload =  function() {
+                     var canvas = this.canvas;
+                     canvas.setAttribute("style", "position: absolute; left: 0; top: 0; right: 0; margin-left: auto; margin-right: auto; z-index: 0;")
+                     canvas.classList.add('grayscale');
+
+                     var div_height = 400; //800;
+                     var div_width = 1000;
+                     var ratio = div_height / this.height;
+
+                     var canvas_height = div_height;
+                     var canvas_width = Math.ceil(this.width * ratio);
+                     canvas.height = canvas_height;
+                     canvas.width = canvas_width;
+                     canvas.style.height = canvas_height;
+                     canvas.style.width = canvas_width;
+                     canvas.onmouseover = function() { 
+                            if (this.classList.contains("color")) {
+                                this.classList.remove("color");
+                                this.classList.add("grayscale");
+                            } else{
+                                this.classList.remove("grayscale");
+                                this.classList.add("color");
+                            }
+                        }
+                     canvas.onmouseleave = function() { 
+                            if (this.classList.contains("color")) {
+                                this.classList.remove("color");
+                                this.classList.add("grayscale");
+                            } else{
+                                this.classList.remove("grayscale");
+                                this.classList.add("color");
+                            }
+                        }
+
+                      
+
+                     var centerShift_x = ( canvas.width - canvas.width) / 2;
+                     var centerShift_y = ( canvas.height - canvas.height) / 2;
+
+                     var ctx = canvas.getContext('2d');
+                     //ctx.drawImage(this,0,0,this.width, this.height);
+                     ctx.clearRect(0,0,canvas.width, canvas.height);
+                     ctx.drawImage(this, 0,0, this.width, this.height,
+                                          centerShift_x,centerShift_y, canvas.width, canvas.height);
+
+                     drawingcanvas = this.drawingcanvas; 
+                     drawingcanvas.setAttribute("style", "position: absolute; left: 0; top: 0; pointer-events: none; right: 0; margin-left: auto; margin-right: auto; z-index: 1;")
+                     //drawingcanvas.setAttribute('width', div_width);
+                     //drawingcanvas.setAttribute('height', div_height);
+                     drawingcanvas.style.width = canvas_width;
+                     drawingcanvas.style.height = canvas_height;
+                     drawingcanvas.width = canvas_width;
+                     drawingcanvas.height = canvas_height;
+
+                     ctx = drawingcanvas.getContext('2d');
+                     var im_points = this.data['data']; 
+         
+                     //Find the sillhouette key and choose the point
+                     var keys = Object.keys(im_points);
+                     var rPartInd = 0;
+                     //Select the point to display 
+                     if (keys.length >1){
+                         var indSilh = 0; //Choose first point or silhouette as "Object"
+                         for(var j=0; j < keys.length; j++){
+                           key = keys[j];
+                           len = key.length;
+                           if (key.substring(len-3, len) == "100"){
+                               indSilh = j;
+                               break;
+                           }
+                          }
+                         if(Math.round(Math.random()) == 1){ //Give 50/50 chance of being the silhouette class or the rest
+                            rPartInd = indSilh; 
+                         } else{
+                             rPartInd = (indSilh + 1 + Math.floor(Math.random()*(Object.keys(im_points).length-1))) % keys.length ;
+                         }
+                     }
+         
+                     var key = Object.keys(im_points)[rPartInd];
+                     if (typeof(key) === 'undefined'){
+                         console.log("undefined key!!!");
+                         console.log('key ' + key);
+                         console.log(rPartInd + '. of .'+ Object.keys(im_points).length);
+                         console.log(Object.keys(im_points));
+                         console.log(im_points);
+         
+                     }
+         
+                     // Parse key name: "object_instance#_part"
+                     var indUnd1 = key.indexOf("_");
+                     var indUnd2 = key.indexOf("_", indUnd1+1);
+                     var obj = key.substring(0,indUnd1);
+                     var instance = key.substring(indUnd1+1, indUnd2);
+                     var part = key.substring(indUnd2+1, key.length); 
+         
+                     //Select point from list of k points in region
+                     var part_points = im_points[key]['points'];
+                     var part_area = im_points[key]['area'];
+                     var rPointInd = Math.floor(Math.random()*(part_points.length))
+                     var point = part_points[rPointInd];
+                     //console.log("Ratio: " + ratio);
+                     //console.log("Shift: (" + centerShift_x + ", " + centerShift_y+")");
+                     VG.drawPoint(ctx, point, centerShift_x, centerShift_y, ratio, 3);
+                     //VG.drawPoint(ctx, point, centerShift_x, centerShift_y, 1, 1);
+                   
+                     //Store relevant information in data-attributes
+                     canvas.setAttribute('data-im-area', this.height*this.width);
+                     canvas.setAttribute('data-obj', obj);
+                     canvas.setAttribute('data-inst', instance);
+                     canvas.setAttribute('data-part', part);
+                     canvas.setAttribute('data-part-area', part_area);
+                     canvas.setAttribute('data-x', point[1]); 
+                     canvas.setAttribute('data-y', point[0]);
+                     canvas.setAttribute('data-response', 'NA');
+                     canvas.setAttribute('data-gt', this.gt); 
+                     //$(canvas).hide();
+
+
+                     var imdiv = this.container_div;
+                     imdiv.style.width = div_width; 
+                     imdiv.style.height = div_height;
+                     imdiv.style.display = "block";
+
+                     imdiv.appendChild(canvas);
+                     imdiv.appendChild(drawingcanvas);
+                     $(imdiv).hide();
+                     divsLoaded++;
+                   }
+
+             }
+         
+         
+         
+         var images_div = $('#c-imgs-div');
+         images_div.show();
+         
+         
+         var task_started = false;
+         
+         var tasks = [];
+         function show(idx,div,cb) {
+             for (var i=0; i < tasks.length; i++) {
+                 tasks[i].disable()
+             }
+            $('#submit-btn').attr('disabled',true).addClass('hidden');
+             $('#last-task').addClass('hidden');
+             $('#error-div').addClass('hidden');
+              //console.log("Index:\t"+idx+" / " + batch_size);
+             if (idx == batch_size-1) {
+                 $('#last-task').removeClass('hidden');
+                 if (!preview) {
+                 $('#submit-btn').attr('disabled',false).removeClass('hidden');
+                 } 	    
+             }
+         
+             var task_input = new Object();
+             task_input.canvas = $(im_canvases[idx]); 
+             task_input.im_name = task_input.canvas.attr('id');
+             task_input.obj_id = task_input.canvas.attr('data-obj');
+             task_input.inst_id = task_input.canvas.attr('data-inst');
+             task_input.part_id = task_input.canvas.attr('data-part');
+             task_input.part_area = task_input.canvas.attr('data-part-area');
+             task_input.im_area = task_input.canvas.attr('data-im-area');
+             task_input.xCoord = task_input.canvas.attr('data-x');
+             task_input.yCoord = task_input.canvas.attr('data-y');
+             task_input.getAnswer = function() {
+                 var resp = task_input.canvas.attr('data-response');
+                 if (resp == 'NA') console.log('Data not loaded');
+                 return resp;
+             };
+                 
+         
+             if (tasks.length <= idx) {
+                 var task = new VG.PartTask(div, task_input);
+                 tasks.push(task);
+             }
+             tasks[idx].enable();
+         }
+         
+         
+             // Bind form to submit to s3
+            //$('#results-form').submit(VG.putObj);
+          
+             
+          var t = 'Click here to start task (' + batch_size + ' images.)';
+          $('#start-btn').text(t);
+          
+          $('#start-btn').click(function() {
+                 if(divsLoaded == batch_size){
+                     $('#loading-sign').hide();
+                     $('#start-btn').addClass('hidden')
+                         .attr('disabled',true);
+                     $('#submit-btn').removeClass('hidden');
+                     
+                     var images_div = $('#c-imgs-div');
+                     var buttons_div = $('#c-buttons-div');
+                     var options_div = $('#c-options-div');
+                     
+                     images_div.removeClass('hidden');
+                     buttons_div.removeClass('hidden');
+                     options_div.removeClass('hidden');
+                     
+                     var num_images = batch_size;
+                     var carosel_scroll = false;
+                     var carosel = new VG.Carosel(im_canvases, point_canvases, objDict, images_div, buttons_div, options_div, num_images, show,
+                                      carosel_scroll);
+                     carosel.enable();
+                     carosel.enableKeyboardShortcuts();
+                     
+                     task_started = true;
+                 }
+                 else {
+                     $('#loading-sign').text('Almost there! ' + divsLoaded + ' images of ' + batch_size + ' loaded so far.')
+                                       .removeClass('hidden');
+                   }
+          });
+          
+             function SaveAnswers() {
+                 var threshold = 0.6; //Number required to submit
+                 var num_gt = 0.0;
+                 for (var i=0; i < batch_size; i++){
+                    if (ground_truths[i] != 'NA'){
+                        num_gt += 1.0;
+                  }
+                }
+                console.log("obj " + obj);
+                 var answers = [];
+                 var bOk = false;
+                 var score = 0.0;
+                 for (var i=0; i < batch_size; i++) {
+                     var a = tasks[i].GetAnswerIfValid();
+                     ans = Object.values(a)[0]['answer'];
+                     if (ground_truths[i] != 'NA'){
+                        console.log('GT ' + ground_truths[i] + ' ' + typeof(ground_truths[i]));
+                        console.log('Ans ' + ans + ' ' + typeof (ans));
+                        if (ans == ground_truths[i] || (ground_truths[i] == '100' && ans == obj_id)){
+                            score+=1;
+                         }
+                     }
+                     answers.push(a);
+                 };
+                 score = score/num_gt;
+                 console.log('score');
+                 console.log(score);
+                 if (score > threshold) {
+                     bOk = true;
+                 }
+
+                 var dt = new Date();
+         
+                   // Display the month, day, and year. getMonth() returns a 0-based number.
+                //   var month = dt.getMonth()+1;
+                //   var day = dt.getDate();
+                //   var year = dt.getFullYear();
+                //   var time = year + '_' + month + '_' + day + '_' + hour + '_' + minute + '_' + second;
+                 var time = dt.toISOString();
+                 var result = answers; 
+                 if (debug_mode) {
+                     console.log(JSON.stringify(result));
+                 }
+         
+                 if (bOk) {
+                     $('#output').val(JSON.stringify(result));
+                     $('#assignmentId').val(url_params.assignmentId);
+                     $('#results-time').val(time);
+                 } 
+                 return [bOk, score];
+             }
+          
+          $('#submit-btn').click(function() {
+             save_data = SaveAnswers();
+             bOk = save_data[0];
+             score = save_data[1];
+             console.log("OK to submit: " + bOk);
+             console.log('Results:');
+             console.log($('#output').val());
+             if (bOk) {
+                if (debug_mode) {
+                   $('#error-div').text('Ok submitting').removeClass('hidden');
+                } else {
+                   $('#results-form').submit();
+                }
+                return true;
+             } else {
+                $('#error-div').text('Error submitting: Annotation quality of ' + (score*100) +  '\% not up to standards. please double-check your work and try again').removeClass('hidden');
+                return false;
+             }
+          });
+                 function toTitleCase(str)
+                    {
+                        return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+                    } 
+                 var obj_type_title = toTitleCase(obj_type);
+                 //var obj = "Object or Part";
+                 //var objs = "object or part";
+             var obj = "<b>Target Classes: </b><i>" + obj_type_title + "</i> or <i>Part of " + obj_type_title + "</i>";
+                 var objs = "object or part";
+          $('#clsname').html(obj);
+          $('#question_title').text("What is that?");
+
+             var instructions = document.getElementById('global-instr');
+             instructions.style.textAlign = "left";
+         
+             var article = "a";
+             if (["a", "e", "i", "o", "u"].includes(obj_type[0])){
+                 article = "an";
+             }
+
+             instructions.innerHTML = "<p><h3 style=\"text-align: center;\">Instructions:</h3><br>" + 
+             "&emsp;&emsp;Imagine that you are looking at a picture of " + article + " " + obj_type + ", and your friend points to a particular spot on the " + obj_type + " (indicated with a red ringed point). Your job is to figure out whether they are referring to the <b> whole " + obj_type + "</b> or to a specific <b>part</b> of the " + obj_type + " (or whether it is <b>impossible to tell</b>  between the two without further clarification). "+
+             "If you believe that the point refers to something else (e.g. if it lands on an obstructing object or in a large gap), please respond with \"<b>not " + obj_type + "</b>.\"</p> " + 
+                 "<br><br><p><i>Note:</i> Images are initially displayed in grayscale to assist you in finding the point; you may press the [t] button or hover the cursor over an image to alternate between color and grayscale views.</p>" +
+                     "<br>" + 
+                 '<p style="text-align: center;"><b>Examples: </b></p><br>' + 
+                 "<p><br>The point in the image below likely refers to " + article + " <b>" + obj_type + " part</b> (in this case, the " + obj_type + "\'s " + example_part_name + ").</p><br>";  
+            instructions.appendChild(part_im_span);
+            var middle_node = document.createElement("span");
+                 //middle_node.innerHTML = "<p><br>most likely refers to a " + obj_type + " part, and <br><br> </p>";
+              middle_node.innerHTML = "<p style='text-align: center;'><br>However, the point in the next image most likely refers to the <b>whole " + obj_type + "</b>.<br><br> </p>";
+            instructions.appendChild(middle_node); 
+            instructions.appendChild(obj_im_span);
+            var end_node = document.createElement("span");
+            end_node.innerHTML = "<p><br>" + 
+                 //"most likely refers to the whole " + obj_type + ".</p>" + 
+                 "<br>" + 
+                 "<li> Note that you will not be allowed to continue to the next image until you have made your selection, but you are free to return to any images later on should you have a change of heart.</li><br>" + 
+                 "<li> You will not be able to submit unless you surpass a target accuracy on the task. However we guarantee that once you submit, your task will not be rejected and will be approved within 72 hours.</li>";
+            instructions.appendChild(end_node);
+         
+          //if (preview) {
+          //$('#submit-btn').text('Submit disabled: preview mode')
+          //    .removeClass('btn-success').addClass('btn-danger');
+          //$('#preview-div').removeClass('hidden');
+          //} else if (!debug_mode) {
+          //$('#results-form').attr('action', url_params.turkSubmitTo + '/mturk/externalSubmit');    
+          //}
+          
+          $(document.documentElement).keyup(function(e) {
+         if ($.inArray(e.keyCode, [13]) !== -1) { // pressed enter
+           if (task_started) {
+         //$('#submit-btn').click();
+           } else {
+         $('#start-btn').click();
+           }
+         }
+          });
+         }
+         
+         //VG.getImages(batch_size, function(imgs) {main(imgs)});
+           $( document ).ready(function() {console.log('Ready'); main();});
+         });
+      </script>
+   </body>
+</html>
+

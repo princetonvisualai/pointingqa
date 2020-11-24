@@ -1,0 +1,91 @@
+<script type='text/json' id='input'>
+  {{ input }}
+</script>
+<script type='text/json' id='im_names'>
+  {{ im_names }}
+</script>
+<form id='results-form' method='post' action='dummy' class='text-center'>
+  <input type='hidden' value='' name='assignmentId' id='assignmentId'/>
+  <input type='hidden' value='' name='output' id='output'/>
+  <!--  <input type='submit' class='btn btn-lg btn-success' id='submit-btn' value='Submit' disabled/> -->         
+</form>
+<script>
+    var simplewill = (function() {
+          function getUrlParams() {
+              return _.chain(location.search.slice(1).split('&'))
+              .map(function(x) {
+                  if (x) return _.map(x.split('='), decodeURIComponent);
+              }).compact()
+              .object()
+              .value();
+          }
+        function getInput(default_input) {
+          if (typeof(default_input) === 'undefined') default_input = null; 
+          try {
+            var input = JSON.parse($('#input').html());
+          } catch (e) {
+            var input = default_input;
+          }
+          try {
+              return {'input': [input, JSON.parse($('#im_names').html())]};
+          } catch (e) {
+              return {'input': [input]};
+          }
+        }
+
+        return {
+            getInput: getInput,
+            getUrlParams: getUrlParams
+        }
+  })()
+
+  var simpleamt = (function() {
+    
+    // Copied from https://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript/5158301#5158301
+    function getUrlParam(name) {
+        var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+        return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+    }
+
+    function getInput(default_input) {
+      if (typeof(default_input) === 'undefined') default_input = null; 
+      try {
+        var input = JSON.parse($('#input').html());
+      } catch (e) {
+        var input = default_input;
+      }
+      try {
+          return {'input': [input, JSON.parse($('#im_names').html())]};
+      } catch (e) {
+          return {'input': [input]};
+      }
+    }
+
+    function setOutput(output) {
+      $('#output').val(JSON.stringify(output));
+    }
+
+    function isPreview() {
+      var assignment_id = getUrlParam('assignmentId');
+      if (assignment_id === null) return false;
+      return assignment_id == 'ASSIGNMENT_ID_NOT_AVAILABLE';
+    }
+
+    function setupSubmit() {
+      var submit_to = getUrlParam('turkSubmitTo');
+      console.log('Submitting to this domain');
+      console.log(submit_to);
+      $('#results-form').attr('action', submit_to + '/mturk/externalSubmit');                      
+      $('#assignmentId').val(getUrlParam('assignmentId'));
+    }
+
+    return {
+      getInput: getInput,
+      setOutput: setOutput,
+      isPreview: isPreview,
+      setupSubmit: setupSubmit,
+      getUrlParam: getUrlParam
+    }
+
+  })();
+</script>
