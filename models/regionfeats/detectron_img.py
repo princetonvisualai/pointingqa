@@ -137,15 +137,6 @@ if __name__ == '__main__':
 	cnt = 0
 	img_ids = list(objpart.keys())
 
-	'''
-	Possible modes for now:
-	1. 'post_bbox_all': take all bounding boxes that contain the point.
-	2. 'post_bbox_all_excl': take all bounding boxes that contain the point and don't contain another point
-	3. 'post_bbox_topn': take all bounding boxes from top N that contain the point
-	4. 'bbox_crop': crop image to ground truth bounding box 
-	5. 'point_crop': crop image to max half the image size surrounding the point
-	'''
-
 	for img_id in img_ids[args.lower:args.higher]:
 		
 		cnt = cnt + 1
