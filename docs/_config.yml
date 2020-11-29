@@ -3,3 +3,7 @@ title: "Point and Ask: Incorporating Pointing into Visual Question Answering"
 # show_downloads: true
 google_analytics:
 theme: jekyll-theme-tactile
+sass:
+  sass_dir: _sass
+  style: compressed
+
