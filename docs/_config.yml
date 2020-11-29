@@ -1,0 +1,9 @@
+title: "Point and Ask: Incorporating Pointing into Visual Question Answering"
+# description: Tactile is a theme for GitHub Pages.
+# show_downloads: true
+google_analytics:
+theme: jekyll-theme-tactile
+sass:
+  sass_dir: _sass
+  style: compressed
+
