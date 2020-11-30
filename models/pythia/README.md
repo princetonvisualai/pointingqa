@@ -22,6 +22,6 @@ python3 -W ignore ./tools/run.py --tasks vqa --datasets vqamb_level2 --model pyt
 
 The configs need to be set appropriately for these commands to succeed. Note the following models implemented apart from Pythia proper:
 
-* Pythia-point: this is the implementation of the Global-QA-model. Requires both image and context features to be set.
-* Pythia-bbox: this is an oracle method for LookTwice-QA which takes in the ground-truth bounding box around the point.
-* Pythia-noatt: this model does not compute attention and assumes that only a single region proposal is provided (e.g. smallest or highest-scoring bounding box).
+* **Pythia-point**: this is the implementation of the Global-QA-model. Requires both image and context features to be set.
+* **Pythia-bbox**: this is an oracle method for LookTwice-QA which takes in the ground-truth bounding box around the point.
+* **Pythia-noatt**: this model does not compute attention and assumes that only a single region proposal is provided (e.g. smallest or highest-scoring bounding box).
