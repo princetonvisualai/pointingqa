@@ -1,9 +1,9 @@
 # Point and Ask: Incorporating Pointing into VQA
 
-This is a release of the code for the paper "Point and Ask: Incorporating Pointing Into Visual Question Answering.
+This is a release of the code for the paper "Point and Ask: Incorporating Pointing Into Visual Question Answering".
 
 <p>
-  <img src="pointingqa.png" width="600" height="180" />
+  <img src="pointingqa.png" width="620" height="200" />
 </p>
 
 ```
