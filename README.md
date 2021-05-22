@@ -3,7 +3,7 @@
 This is a release of the code for the paper "Point and Ask: Incorporating Pointing Into Visual Question Answering".
 
 <p>
-  <img src="pointingqa2.png" width="600" height="200" />
+  <img src="pointingqa2.png" width="575" height="200" />
 </p>
 
 ```
