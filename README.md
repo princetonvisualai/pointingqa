@@ -28,7 +28,7 @@ The following packages are required to run the models (datasets already provided
 
 ## Data
 
-See datasets folder for all datasets: Local-QA, Intent-QA, LookTwice-QA, and Verbal/Spatial Disambiguation. Each dataset is a JSON file (README associated with each dataset describes formatting). Train/val/test image splits are also included for each dataset. Note that the Local-QA and Intent-QA datasets have test-dev sets, which can be used for ablation studies. 
+See datasets folder for all datasets: Local-QA, LookTwice-QA, and Verbal/Spatial Disambiguation (General-QA coming soon!) Each dataset is a JSON file (README associated with each dataset describes formatting). Train/val/test image splits are also included for each dataset. 
 
 ## Models
 
