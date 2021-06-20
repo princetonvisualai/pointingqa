@@ -32,10 +32,10 @@ See datasets folder for all datasets: Local-QA, LookTwice-QA, and Verbal/Spatial
 
 ## Models
 
-You can train either the Local-QA-Model or Global-QA-Model on any dataset. For example, to run the Local-QA-Model on the Intent-QA Dataset, run:
+You can train either the Local-QA-Model or Global-QA-Model on any dataset. For example, to run the Local-QA-Model on the Local-QA Dataset, run:
 
 ```
-python3 -W ignore ./tools/run.py --tasks vqa --datasets objpart --model pythia --config configs/vqa/objpart/pythia.yml
+python3 -W ignore ./tools/run.py --tasks vqa --datasets vqamb --model pythia --config configs/vqa/objpart/pythia.yml
 ```
 
 Config options in pythia.yml should be set according to your needs (can also be modified using command line arguments). Please see the models folder for more details. Also includes details on region/grid feature extraction and the semantic segmentation model for Intent-QA.
