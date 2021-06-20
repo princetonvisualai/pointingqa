@@ -9,7 +9,7 @@ This is a release of the code for the paper "Point and Ask: Incorporating Pointi
 ```
 @article{mani2020point,
       title={Point and Ask: Incorporating Pointing into Visual Question Answering}, 
-      author={Arjun Mani and Will Hinthorn and Nobline Yoo and Olga Russakovsky},
+      author={Arjun Mani and Nobline Yoo and Will Hinthorn and Olga Russakovsky},
       year={2020},
       eprint={2011.13681},
       archivePrefix={arXiv},
